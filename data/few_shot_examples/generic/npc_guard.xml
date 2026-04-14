@@ -1,0 +1,45 @@
+<root BTCPP_format="4">
+  <!-- Generic example: a video game NPC guard. Not related to any SITL domain.
+       Demonstrates a behavior repertoire pattern: priority-based fallback over
+       multiple distinct behavior categories (combat / patrol / idle). -->
+  <BehaviorTree ID="NPCGuardRepertoire">
+    <Fallback name="guard_behavior_selector">
+
+      <!-- Combat behavior: highest priority -->
+      <Sequence name="combat_behavior">
+        <Condition ID="IsEnemyVisible"/>
+        <Fallback name="combat_actions">
+          <Sequence name="ranged_attack">
+            <Condition ID="IsEnemyInRangedRange"/>
+            <Action ID="DrawBow"/>
+            <Action ID="ShootArrow"/>
+          </Sequence>
+          <Sequence name="melee_attack">
+            <Condition ID="IsEnemyInMeleeRange"/>
+            <Action ID="DrawSword"/>
+            <Action ID="StrikeEnemy"/>
+          </Sequence>
+          <Sequence name="chase">
+            <Action ID="MoveTowardsEnemy"/>
+          </Sequence>
+        </Fallback>
+      </Sequence>
+
+      <!-- Investigate behavior: triggered by suspicious noise -->
+      <Sequence name="investigate_behavior">
+        <Condition ID="IsSuspiciousNoiseHeard"/>
+        <Action ID="FaceNoiseDirection"/>
+        <Action ID="MoveToNoiseLocation"/>
+        <Action ID="LookAround" duration="5"/>
+      </Sequence>
+
+      <!-- Patrol behavior: default routine -->
+      <Sequence name="patrol_behavior">
+        <Action ID="SelectNextWaypoint"/>
+        <Action ID="MoveToWaypoint"/>
+        <Action ID="PauseAndScan" duration="3"/>
+      </Sequence>
+
+    </Fallback>
+  </BehaviorTree>
+</root>

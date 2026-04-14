@@ -1,0 +1,703 @@
+domains:
+
+  # ---------------------------------------------------------------------------
+  # Domain 1: Elevator
+  # ---------------------------------------------------------------------------
+  - name: "elevator"
+    sut_description: >
+      Elevator control software that manages car scheduling, door open/close
+      logic, floor request handling, and safety responses. The software is the
+      SUT; the physical elevator, passengers, and building systems are the
+      simulated environment.
+    objects:
+
+      - name: "elevator_car"
+        description: >
+          The physical elevator car (mechanical hardware: doors, drive,
+          sensors, brakes). Acts as the mechanical plant the SUT controls.
+        expected_behaviors:
+          - text: "Door open and close with light curtain obstruction detection at 50mm resolution"
+            source: "EN 81-20:2020 §5.3.9 (Protective devices for power-operated doors)"
+            category: "door_safety"
+            keywords:
+              required: ["door"]
+              any_of:
+                - ["open", "opening", "opened"]
+                - ["close", "closing", "closed", "shut"]
+                - ["obstruction", "obstacle", "block", "blocked", "interrupt", "detect", "detected", "detection", "curtain", "beam", "sensor", "sensors", "safety"]
+          - text: "Door reopen on obstruction with kinetic energy limit and acoustic signal on detector failure"
+            source: "EN 81-20:2020 §5.3.9.3"
+            category: "door_safety"
+            keywords:
+              required: ["door"]
+              any_of:
+                - ["reopen", "reverse", "open", "opening", "retract", "prevent", "preventing", "stop", "stopped"]
+                - ["obstruction", "obstacle", "block", "blocked", "blocking", "force", "energy", "kinetic", "detected"]
+                - ["alarm", "acoustic", "buzzer", "beep", "signal", "signaling", "warn", "warning", "alert", "notify", "notification"]
+          - text: "Overload sensor activation preventing door close and movement until load is reduced"
+            source: "EN 81-20:2020 §5.12.1.2 (overload device)"
+            category: "load_protection"
+            keywords:
+              required: ["overload", "overweight", "weight", "load", "loaded", "loading", "capacity", "max"]
+              any_of:
+                - ["sensor", "sensors", "detect", "detected", "detection", "check", "trigger", "triggered"]
+                - ["alarm", "alert", "warn", "warning", "prevent", "preventing", "block", "blocked", "stop", "stopped", "halt"]
+                - ["door", "doors", "movement", "move", "moving", "operate", "operation"]
+          - text: "Electrical safety circuit activation stopping car movement immediately"
+            source: "EN 81-20:2020 §5.11 (electrical safety devices)"
+            category: "electrical_safety"
+            keywords:
+              required: ["safety", "electrical", "electric", "circuit", "fault", "faults", "faulty", "malfunction"]
+              any_of:
+                - ["stop", "stopped", "halt", "brake", "brakes", "abort", "shutdown", "disable", "disabled"]
+                - ["car", "elevator", "movement", "moving", "move", "motor", "operation"]
+          - text: "Seismic sensor activation moving car to nearest landing with doors open"
+            source: "ASME A17.1 §8.4 (Earthquake Provisions for Elevators)"
+            category: "emergency_response"
+            keywords:
+              required: ["seismic", "earthquake", "quake", "tremor", "disaster"]
+              any_of:
+                - ["sensor", "sensors", "detect", "detected", "detection", "trigger", "triggered", "active", "alert"]
+                - ["nearest", "closest", "near", "landing", "floor", "floors", "move", "moving"]
+                - ["door", "doors", "open", "opening", "evacuate", "evacuation"]
+          - text: "Inspection or maintenance mode operation with reduced speed and override safety"
+            source: "EN 81-20:2014 §5.12.1.5 (inspection operation)"
+            category: "maintenance_mode"
+            keywords:
+              required: ["maintenance", "inspection", "service", "servicing", "manual", "diagnostic"]
+              any_of:
+                - ["mode", "operation", "active", "activate", "enable", "enabled", "enter", "request"]
+                - ["slow", "reduce", "reduced", "speed", "override", "controlled", "limited", "staff", "technician", "inspect"]
+          - text: "Emergency electrical operation for trapped passenger rescue"
+            source: "EN 81-20:2014 §5.12.1.6 (emergency electrical operation)"
+            category: "emergency_response"
+            keywords:
+              required: ["emergency", "rescue", "trap", "trapped", "stuck", "stranded"]
+              any_of:
+                - ["passenger", "passengers", "people", "person", "occupant", "occupants"]
+                - ["operation", "manual", "release", "evacuate", "evacuation", "move", "moving", "assist"]
+          - text: "Stopping accuracy and releveling at floor"
+            source: "EN 81-20:2020 §5.12.1.1.4 (stopping accuracy and releveling)"
+            category: "movement_control"
+            keywords:
+              required: ["floor", "floors", "level", "landing"]
+              any_of:
+                - ["stop", "stopped", "stopping", "halt", "arrive", "arrived", "reach", "reached", "align", "position"]
+                - ["accuracy", "accurate", "level", "leveling", "relevel", "adjust", "adjusting", "correct", "alignment", "precise"]
+
+      - name: "passenger"
+        description: >
+          A human passenger interacting with the elevator system. Encompasses
+          all passenger behavior types (normal, impatient, group, panic).
+        expected_behaviors:
+          - text: "Press hall call button (up or down) and wait for car arrival"
+            source: "EN 81-70:2018 §5.4 (hall call devices)"
+            category: "request_call"
+            keywords:
+              required: ["call", "button", "buttons", "hall", "request"]
+              any_of:
+                - ["press", "pressing", "push", "pushing", "touch", "request", "requesting"]
+                - ["wait", "waiting", "arrive", "arrives", "arrival", "elevator", "car"]
+          - text: "Enter car when doors open and select destination floor"
+            source: "EN 81-70:2018 §5.3 (car operating panel)"
+            category: "boarding"
+            keywords:
+              required: ["enter", "entering", "entered", "board", "boarding", "step"]
+              any_of:
+                - ["car", "elevator", "cabin"]
+                - ["door", "doors", "open", "opens", "opened"]
+                - ["select", "selects", "press", "destination", "floor", "floors", "panel", "button", "buttons"]
+          - text: "Trigger door reopen by interrupting light curtain when entering or exiting"
+            source: "EN 81-20:2020 §5.3.9.3"
+            category: "door_interaction"
+            keywords:
+              required: ["door", "doors"]
+              any_of:
+                - ["block", "blocked", "blocking", "interrupt", "obstruct", "obstructing", "interfere", "pry", "force", "hold", "holding"]
+                - ["enter", "entering", "exit", "exiting", "leave", "leaving", "step", "boarding"]
+                - ["reopen", "reverse", "stop", "stopped", "open", "opens"]
+          - text: "Hold door open by pressing door open button or extending dwell time"
+            source: "EN 81-70:2018 §5.4.4 (door dwell time)"
+            category: "door_interaction"
+            keywords:
+              required: ["door", "doors", "hold", "holding"]
+              any_of:
+                - ["open", "opens", "opening", "keep", "keeping"]
+                - ["button", "buttons", "press", "pressing", "dwell", "extend", "extending", "delay", "delaying", "longer", "wait"]
+          - text: "Trigger overload condition by exceeding rated load capacity"
+            source: "EN 81-20:2020 §5.12.1.2"
+            category: "load_protection"
+            keywords:
+              required: ["overload", "overloaded", "overloading", "load", "loaded", "weight", "capacity", "max", "maximum"]
+              any_of:
+                - ["exceed", "exceeds", "exceeded", "exceeding", "trigger", "triggered", "cause", "max", "maximum", "over", "rated"]
+                - ["passenger", "passengers", "cargo", "people", "person", "group"]
+          - text: "Press emergency alarm button to call building attendant or emergency line"
+            source: "EN 81-28:2018 (Remote alarm)"
+            category: "emergency_request"
+            keywords:
+              required: ["alarm", "emergency", "panic", "distress"]
+              any_of:
+                - ["button", "buttons", "press", "pressing", "push", "trigger", "triggered", "activate", "activated"]
+                - ["call", "calling", "contact", "contacting", "request", "signal", "signaling", "send", "sends", "sending", "notify"]
+          - text: "Wheelchair or reduced-mobility passenger requiring extended door dwell"
+            source: "EN 81-70:2018 (Accessibility)"
+            category: "accessibility"
+            keywords:
+              required: ["wheelchair", "disabled", "mobility", "accessible", "accessibility", "slow", "elderly", "child"]
+              any_of:
+                - ["passenger", "passengers", "person", "user"]
+                - ["door", "doors", "dwell", "extend", "extending", "longer", "wait", "waiting", "extra", "delay", "hold"]
+          - text: "Press multiple destination floors during single ride"
+            source: "EN 81-70:2018 §5.3"
+            category: "request_call"
+            keywords:
+              required: ["floor", "floors", "destination", "destinations"]
+              any_of:
+                - ["multi", "multiple", "several", "many", "various", "different", "all", "group"]
+                - ["select", "selects", "press", "pressing", "request", "requested", "panel", "button", "buttons"]
+
+      - name: "building_system"
+        description: >
+          Building-level systems sending signals to the elevator (fire alarm,
+          seismic sensor, power management, security access, firefighter mode).
+        expected_behaviors:
+          - text: "Fire alarm activation triggering Phase 1 fire service recall"
+            source: "EN 81-72:2020 §5.8.7 (Phase 1 firefighters' service recall)"
+            category: "fire_response"
+            keywords:
+              required: ["fire", "smoke", "alarm"]
+              any_of:
+                - ["alarm", "activate", "activated", "trigger", "triggered", "detect", "detected", "send", "sends", "sending", "signal"]
+                - ["recall", "return", "evacuate", "evacuation", "phase", "ground", "designated", "emergency", "lockdown"]
+          - text: "Firefighter switch operation enabling Phase 2 in-car firefighter control"
+            source: "EN 81-72:2020 §5.8.8 (Phase 2 firefighters' service)"
+            category: "fire_response"
+            keywords:
+              required: ["firefighter", "firefighters", "fireman", "fire"]
+              any_of:
+                - ["switch", "key", "control", "controls", "mode", "phase", "service", "command"]
+                - ["enable", "enabled", "active", "activate", "activated", "operate", "operation"]
+          - text: "Seismic sensor activation initiating elevator earthquake response"
+            source: "ASME A17.1 §8.4"
+            category: "seismic_response"
+            keywords:
+              required: ["seismic", "earthquake", "quake", "tremor", "disaster"]
+              any_of:
+                - ["sensor", "sensors", "detect", "detected", "detection", "trigger", "triggered", "alert", "send", "signal"]
+                - ["response", "react", "elevator", "stop", "stopped", "evacuate", "evacuation", "emergency", "alert"]
+          - text: "Power outage triggering emergency battery operation"
+            source: "EN 81-20:2020 §5.12.1.6"
+            category: "power_management"
+            keywords:
+              required: ["power", "outage", "blackout", "failure", "fail", "loss", "supply"]
+              any_of:
+                - ["lose", "loss", "out", "fail", "failed", "outage", "interrupted"]
+                - ["battery", "backup", "emergency", "ups", "auxiliary", "reserve", "secondary", "alternate"]
+                - ["operate", "operation", "move", "elevate", "evacuate", "continue", "sustain", "send"]
+          - text: "Security access control restricting floor selection by card or PIN"
+            source: "EN 81-70:2018 §5.5 (control devices)"
+            category: "access_control"
+            keywords:
+              required: ["security", "access", "auth", "authorize", "authorized", "permission", "permissions"]
+              any_of:
+                - ["card", "pin", "key", "credential", "badge", "individual", "user"]
+                - ["restrict", "restricted", "restricting", "allow", "allowed", "deny", "denied", "block", "blocked", "floor", "floors", "lockdown"]
+          - text: "Smoke detector activation on a specific floor making elevator skip that floor"
+            source: "ASME A17.1 §2.27.3.2"
+            category: "fire_response"
+            keywords:
+              required: ["smoke", "detector", "fire"]
+              any_of:
+                - ["activate", "activated", "trigger", "triggered", "sense", "detect", "detected", "send", "signal", "alarm"]
+                - ["floor", "floors", "skip", "avoid", "bypass", "evacuate", "evacuation"]
+          - text: "Scheduled maintenance mode signal locking out normal service"
+            source: "EN 81-20:2014 §5.12.1.5"
+            category: "maintenance_mode"
+            keywords:
+              required: ["maintenance", "service", "scheduled", "schedule"]
+              any_of:
+                - ["mode", "signal", "send", "sends", "lock", "lockout", "request"]
+                - ["normal", "operation", "disable", "disabled", "block", "blocked", "restrict", "manual"]
+
+  # ---------------------------------------------------------------------------
+  # Domain 2: Drone
+  # ---------------------------------------------------------------------------
+  - name: "drone"
+    sut_description: >
+      Delivery drone flight control and mission planning software running
+      on PX4 SITL. The SUT handles takeoff, waypoint navigation, package
+      delivery, obstacle avoidance, and return-to-base.
+    objects:
+
+      - name: "weather_environment"
+        description: >
+          Atmospheric conditions affecting the drone's flight: wind, gusts,
+          turbulence, visibility.
+        expected_behaviors:
+          - text: "Steady mean wind velocity from a configurable direction"
+            source: "PX4 Gazebo wind plugin (windVelocityMean, windDirectionMean)"
+            category: "wind"
+            keywords:
+              required: ["wind", "winds", "windy", "breeze"]
+              any_of:
+                - ["steady", "mean", "constant", "base", "normal", "light", "calm", "regular"]
+                - ["velocity", "speed", "speeds", "magnitude", "strength", "intensity"]
+                - ["direction", "heading", "vector", "from", "north", "south", "east", "west"]
+          - text: "Wind velocity variance producing realistic fluctuation"
+            source: "PX4 Gazebo wind plugin (windVelocityVariance)"
+            category: "wind"
+            keywords:
+              required: ["wind", "winds"]
+              any_of:
+                - ["variance", "vary", "varies", "random", "noise", "fluctuat", "shift", "change", "changes", "varying", "unpredict"]
+                - ["velocity", "speed", "speeds", "direction", "intensity", "strength"]
+          - text: "Wind gust events with configurable max velocity and direction variance"
+            source: "PX4 Gazebo wind plugin (windGustVelocityMean, windGustVelocityMax)"
+            category: "gust"
+            keywords:
+              required: ["gust", "gusts", "burst", "sudden"]
+              any_of:
+                - ["wind", "winds", "velocity", "speed", "speeds"]
+                - ["max", "maximum", "high", "strong", "intensity", "strength"]
+                - ["random", "trigger", "spawn", "duration", "introduce", "introduced", "occur", "event"]
+          - text: "In-flight wind change via simulator parameters during simulation"
+            source: "PX4 SIH Simulation (SIH_WIND_N, SIH_WIND_E)"
+            category: "wind"
+            keywords:
+              required: ["wind", "winds"]
+              any_of:
+                - ["change", "changes", "changing", "update", "updated", "modify", "shift", "shifts", "vary", "varying", "transition", "introduce"]
+                - ["fly", "flying", "flight", "runtime", "during", "simulation", "simulate", "rapid", "rapidly", "real"]
+          - text: "Atmospheric turbulence injection for SITL robustness testing"
+            source: "MIL-HDBK-1797 Dryden / Von Karman turbulence"
+            category: "turbulence"
+            keywords:
+              required: ["turbulence", "turbulent", "atmospheric", "storm", "stormy", "severe"]
+              any_of:
+                - ["inject", "apply", "add", "simulate", "introduce", "generate"]
+                - ["dryden", "karman", "noise", "buffet", "rough", "weather", "conditions"]
+          - text: "Rain or precipitation reducing visibility and sensor reliability"
+            source: "Gazebo sensor noise / fog plugin"
+            category: "visibility"
+            keywords:
+              required: ["rain", "rainy", "fog", "foggy", "precip", "visibility", "weather", "rainstorm", "storm"]
+              any_of:
+                - ["reduce", "reduced", "lower", "degrade", "degraded", "limit", "affect", "impact", "obscur", "heavy", "low"]
+                - ["sensor", "sensors", "camera", "vision", "see", "visible", "obscur", "darkness", "dim", "issues"]
+
+      - name: "airspace_obstacle"
+        description: >
+          Moving and static objects in the drone's airspace.
+        expected_behaviors:
+          - text: "ADS-B traffic transponder report indicating aircraft on intersecting heading"
+            source: "PX4 User Guide, Air Traffic Avoidance ADS-B/FLARM"
+            category: "traffic_advisory"
+            keywords:
+              required: ["adsb", "transponder", "traffic", "broadcast", "broadcasting", "cooperative"]
+              any_of:
+                - ["aircraft", "plane", "uav", "drone", "drones", "set"]
+                - ["report", "broadcast", "broadcasting", "signal", "message", "communicate"]
+                - ["intersect", "conflict", "conflicting", "approach", "approaching", "head", "heading", "path", "intercept", "intercepting"]
+          - text: "FLARM transponder report for general aviation traffic at low altitude"
+            source: "PX4 Air Traffic Avoidance ADS-B/FLARM"
+            category: "traffic_advisory"
+            keywords:
+              required: ["flarm", "transponder", "traffic", "aviation", "aircraft", "manned"]
+              any_of:
+                - ["aviation", "aircraft", "low", "altitude", "general", "small", "plane"]
+                - ["report", "signal", "broadcast", "transmit"]
+          - text: "Simulated traffic injection via fake_traffic command for SITL testing"
+            source: "PX4 Simulate Failsafes documentation"
+            category: "traffic_advisory"
+            keywords:
+              required: ["traffic", "simulate", "simulated", "fake", "inject", "swarm"]
+              any_of:
+                - ["test", "sitl", "simulation"]
+                - ["spawn", "command", "trigger", "injection", "introduce"]
+          - text: "Static obstacle (building, tower) intersecting planned flight path"
+            source: "PX4 Collision Prevention with 3DVFH+"
+            category: "static_obstacle"
+            keywords:
+              required: ["obstacle", "obstacles", "build", "building", "buildings", "tower", "structure", "stationary", "static"]
+              any_of:
+                - ["block", "blocking", "intersect", "obstruct", "obstructing", "appear", "permanent", "fixed"]
+                - ["path", "route", "flight", "trajectory", "way", "fly", "zone"]
+          - text: "Dynamic obstacle entering safety cylinder triggering collision prevention"
+            source: "PX4 Collision Prevention (x500_lidar_2d)"
+            category: "dynamic_obstacle"
+            keywords:
+              required: ["obstacle", "obstacles", "intruder", "collision", "moving"]
+              any_of:
+                - ["dynamic", "moving", "movement", "approach", "approaching", "enter", "entering", "into"]
+                - ["safety", "cylinder", "radius", "zone", "near", "path", "way"]
+                - ["avoid", "avoidance", "prevent", "prevention", "trigger", "react", "evade", "veer"]
+          - text: "Geofence breach signal causing return-to-launch or land response"
+            source: "PX4 Geofence Failsafe"
+            category: "geofence"
+            keywords:
+              required: ["geofence", "geo", "fence", "boundary", "regulatory", "no", "fly"]
+              any_of:
+                - ["breach", "exit", "leave", "violat", "cross", "trigger", "outside", "entering"]
+                - ["return", "rtl", "land", "launch", "home", "abort"]
+
+      - name: "ground_target"
+        description: >
+          Ground-level objects the drone interacts with.
+        expected_behaviors:
+          - text: "Static landing pad with fiducial marker for precision landing"
+            source: "PX4 Precision Landing"
+            category: "landing_pad"
+            keywords:
+              required: ["land", "landing", "pad", "marker", "fiducial", "target", "spot"]
+              any_of:
+                - ["static", "fix", "fixed", "stable", "stationary", "remain", "safe"]
+                - ["aruco", "tag", "visual", "vision", "marker", "act"]
+          - text: "IR-LOCK beacon emission for IR-based precision landing"
+            source: "PX4 Precision Landing — IR-LOCK"
+            category: "landing_pad"
+            keywords:
+              required: ["beacon", "infrared", "lock", "signal"]
+              any_of:
+                - ["land", "landing", "pad", "target"]
+                - ["emit", "emits", "signal", "broadcast", "broadcasting", "transmit"]
+          - text: "Moving landing target following waypoints in simulation"
+            source: "PX4 Precision Landing on moving target"
+            category: "moving_target"
+            keywords:
+              required: ["move", "moving", "movement", "target", "vehicle"]
+              any_of:
+                - ["land", "landing", "pad", "target"]
+                - ["follow", "waypoint", "path", "navigate", "movement", "fixed", "predict", "alter"]
+                - ["speed", "drive", "track", "change", "pattern"]
+          - text: "Obstructed landing zone causing precision landing fallback"
+            source: "PX4 Precision Landing fallback"
+            category: "landing_pad"
+            keywords:
+              required: ["land", "landing", "obstruct", "obstructed", "block", "obstacle", "presence", "clearance"]
+              any_of:
+                - ["zone", "pad", "area", "spot", "space", "site"]
+                - ["fallback", "abort", "retry", "alt", "rapidly", "clear", "avoid"]
+          - text: "Payload delivery drop trigger at target with gripper or release mechanism"
+            source: "PX4 Payloads and Cargo Delivery"
+            category: "delivery"
+            keywords:
+              required: ["payload", "deliver", "delivery", "drop", "package", "cargo", "load"]
+              any_of:
+                - ["release", "gripper", "trigger", "triggered", "open"]
+                - ["target", "destination", "zone", "spot", "site", "ground"]
+          - text: "Multi-vehicle simulation with cooperative ground vehicle"
+            source: "PX4 Multi-Vehicle Simulation"
+            category: "moving_target"
+            keywords:
+              required: ["vehicle", "vehicles", "ground"]
+              any_of:
+                - ["multi", "cooperate", "cooperative", "together", "interact", "interaction", "swarm"]
+                - ["move", "moving", "movement", "drive", "spawn", "become"]
+
+      - name: "signal_environment"
+        description: >
+          RF/GPS signal conditions affecting navigation and communication.
+        expected_behaviors:
+          - text: "GPS signal loss triggering position loss failsafe"
+            source: "PX4 Position Loss Failsafe"
+            category: "gps_loss"
+            keywords:
+              required: ["gps", "gnss", "navigation", "position", "positioning"]
+              any_of:
+                - ["lose", "loss", "lost", "fail", "drop", "unreliable", "unavailable"]
+                - ["signal", "fix", "position", "data"]
+                - ["failsafe", "trigger", "triggered", "react", "implement", "activate", "alternative", "fallback"]
+          - text: "GPS failure injection via SYS_FAILURE_EN parameter"
+            source: "PX4 Simulate Failsafes"
+            category: "gps_loss"
+            keywords:
+              required: ["gps", "failure", "fail", "fault"]
+              any_of:
+                - ["inject", "injection", "simulate", "simulated", "force", "introduce"]
+                - ["param", "trigger", "enable", "test", "check", "diagnostic"]
+          - text: "GPS noise and position drift during simulation"
+            source: "ArduPilot SITL SIM_GPS parameters"
+            category: "gps_degrade"
+            keywords:
+              required: ["gps", "noise", "drift", "degrade", "degraded", "interference", "fluctuat"]
+              any_of:
+                - ["position", "fix", "accuracy", "data", "signal"]
+                - ["random", "vary", "varying", "fluctuat", "interfere", "interference", "unreliable", "unstable"]
+          - text: "RC link loss triggering RC loss failsafe"
+            source: "PX4 RC Loss Failsafe"
+            category: "link_loss"
+            keywords:
+              required: ["remote", "control", "controller", "command", "pilot"]
+              any_of:
+                - ["link", "signal", "connection", "communication"]
+                - ["lose", "loss", "lost", "fail", "drop", "interrupt"]
+                - ["failsafe", "rtl", "land", "return", "trigger", "alternative"]
+          - text: "Telemetry datalink loss triggering data link loss failsafe"
+            source: "PX4 Data Link Loss Failsafe"
+            category: "link_loss"
+            keywords:
+              required: ["telemetry", "datalink", "data", "mavlink", "communication"]
+              any_of:
+                - ["link", "communication", "comm", "connection", "channel"]
+                - ["lose", "loss", "lost", "drop", "fail", "unreliable", "interrupt"]
+                - ["failsafe", "trigger", "alternative", "fallback", "switch"]
+          - text: "GPS spoofing producing false position fix"
+            source: "Kerns et al., Journal of Field Robotics 31(4), 2014"
+            category: "gps_spoof"
+            keywords:
+              required: ["gps", "spoof", "spoofing", "fake", "false"]
+              any_of:
+                - ["position", "fix", "location", "false", "fake", "data"]
+                - ["inject", "injection", "broadcast", "transmit", "send", "introduce"]
+          - text: "Wideband GPS jamming causing loss of fix"
+            source: "Humphreys, IEEE Trans. AES 49(2), 2013"
+            category: "gps_jam"
+            keywords:
+              required: ["gps", "jam", "jamming", "interfere", "interference"]
+              any_of:
+                - ["wide", "band", "rf", "frequency", "broad", "radio", "signal"]
+                - ["lose", "loss", "fail", "fix", "drop", "unreliable", "unavailable"]
+
+  # ---------------------------------------------------------------------------
+  # Domain 3: Smart Factory
+  # ---------------------------------------------------------------------------
+  - name: "smart_factory"
+    sut_description: >
+      AGV (Automated Guided Vehicle) fleet control software that manages
+      task allocation, path planning, collision avoidance, and workstation
+      coordination.
+    objects:
+
+      - name: "conveyor_system"
+        description: >
+          Conveyor belts and material handling equipment.
+        expected_behaviors:
+          - text: "Emergency stop activation halting belt motion"
+            source: "ISO 13850:2015 (Emergency stop function)"
+            category: "emergency_stop"
+            keywords:
+              required: ["emergency", "estop", "stop", "halt", "shutdown"]
+              any_of:
+                - ["belt", "conveyor", "motion", "move", "operation", "moving"]
+                - ["activate", "activated", "trigger", "triggered", "press", "button", "alarm", "fire"]
+          - text: "Interlocked guard stopping conveyor when access door opens"
+            source: "ISO 14119:2013; ISO 14120:2015"
+            category: "safety_interlock"
+            keywords:
+              required: ["interlock", "guard", "guarding", "safety", "protective"]
+              any_of:
+                - ["door", "access", "gate", "cover", "barrier"]
+                - ["open", "opens", "trigger", "active", "activate"]
+                - ["stop", "halt", "disable", "shutdown"]
+          - text: "Load presence detection at AGV transfer point reporting state"
+            source: "VDA 5050 v2.0.0 (state and load topics)"
+            category: "agv_handshake"
+            keywords:
+              required: ["load", "loading", "part", "parts", "package", "item", "material", "materials"]
+              any_of:
+                - ["detect", "detected", "detection", "sense", "present", "presence", "check"]
+                - ["agv", "robot", "vehicle", "transfer", "pickup", "pick", "station"]
+                - ["report", "signal", "state", "status", "communicate", "send"]
+          - text: "Handshake or ready signal exchange with AGV at pickup or dropoff"
+            source: "VDA 5050 v2.0.0 (action and state messages)"
+            category: "agv_handshake"
+            keywords:
+              required: ["handshake", "signal", "ready", "ack", "communicate", "communication"]
+              any_of:
+                - ["agv", "robot", "vehicle"]
+                - ["pickup", "drop", "transfer", "exchange", "load", "loading", "unload", "delivery"]
+          - text: "Conveyor general safety: start warning, controlled stopping, guarding"
+            source: "ANSI/ASME B20.1-2021"
+            category: "general_operation"
+            keywords:
+              required: ["start", "starting", "stop", "stopping", "warn", "warning", "guard", "guarding"]
+              any_of:
+                - ["belt", "conveyor", "operation", "operating"]
+                - ["control", "controlled", "safe", "safety", "warning", "alarm", "emergency"]
+          - text: "Speed and throughput variation affecting AGV scheduling"
+            source: "ISO 22400-2:2014"
+            category: "general_operation"
+            keywords:
+              required: ["speed", "speeds", "throughput", "rate", "pace", "tempo"]
+              any_of:
+                - ["belt", "conveyor", "operation"]
+                - ["vary", "varying", "variation", "change", "changes", "slow", "fast", "normal", "adjust"]
+
+      - name: "human_worker"
+        description: >
+          Factory floor workers walking and performing tasks.
+        expected_behaviors:
+          - text: "Pedestrian crossing AGV path requiring AGV personnel detection and stop"
+            source: "ISO 3691-4:2023 §5"
+            category: "path_crossing"
+            keywords:
+              required: ["worker", "workers", "human", "person", "pedestrian"]
+              any_of:
+                - ["cross", "crossing", "walk", "walking", "path", "route", "way"]
+                - ["agv", "robot", "vehicle", "machinery"]
+                - ["detect", "detected", "sense", "stop", "halt", "yield"]
+          - text: "Worker entering AGV safety zone triggering protective stop"
+            source: "ISO 3691-4:2020 (operating zones)"
+            category: "safety_zone"
+            keywords:
+              required: ["worker", "workers", "human", "person"]
+              any_of:
+                - ["enter", "entering", "approach", "approaching", "near", "inside", "into"]
+                - ["safety", "zone", "area", "perimeter", "hazard", "restricted"]
+                - ["stop", "halt", "trigger", "yield"]
+          - text: "Speed and separation monitoring with collaborative robot"
+            source: "ISO/TS 15066:2016; ISO 10218-2:2025"
+            category: "ssm"
+            keywords:
+              required: ["speed", "separation", "monitor", "monitoring", "ssm", "distance", "proximity"]
+              any_of:
+                - ["worker", "workers", "person", "robot", "human", "collaborate", "collaborative"]
+                - ["distance", "near", "safe", "safety", "proximity"]
+                - ["slow", "stop", "limit", "halt", "yield"]
+          - text: "Manual loading and unloading task at AGV station"
+            source: "ISO 10218-2:2011 §5"
+            category: "manual_task"
+            keywords:
+              required: ["load", "loading", "unload", "unloading", "task", "manual", "manually"]
+              any_of:
+                - ["worker", "workers", "human", "operator", "person"]
+                - ["agv", "station", "transfer", "robot", "machine"]
+                - ["pick", "picking", "place", "placing", "carry", "carrying", "perform", "handle"]
+          - text: "Trigger emergency stop device on operator console or AGV"
+            source: "ISO 13850:2015"
+            category: "emergency_stop"
+            keywords:
+              required: ["emergency", "estop", "stop", "halt"]
+              any_of:
+                - ["press", "activate", "activated", "trigger", "triggered", "push"]
+                - ["worker", "operator", "human", "person"]
+                - ["button", "device", "switch", "console", "alarm"]
+          - text: "Bumper or pressure sensor contact with AGV causing immediate stop"
+            source: "ISO 3691-4:2023 (pressure-sensitive bumper)"
+            category: "contact_safety"
+            keywords:
+              required: ["bumper", "contact", "contacts", "pressure", "touch", "collision"]
+              any_of:
+                - ["worker", "person", "human", "object"]
+                - ["sensor", "detect", "detected", "trigger", "triggered"]
+                - ["stop", "halt", "immediate", "immediately"]
+
+      - name: "factory_equipment"
+        description: >
+          Workstation machines, robot arms, and fixed equipment.
+        expected_behaviors:
+          - text: "Robot arm protective stop on safeguarded space intrusion"
+            source: "ISO 10218-1:2011 §5.5"
+            category: "safety_stop"
+            keywords:
+              required: ["robot", "arm", "machine", "equipment"]
+              any_of:
+                - ["protect", "protective", "safe", "safety", "intrude", "intrusion", "enter", "approach"]
+                - ["stop", "halt", "pause", "shutdown"]
+                - ["space", "zone", "area", "workspace", "perimeter"]
+          - text: "Cell-level safeguarding integrated with AGV interfaces"
+            source: "ISO 10218-2:2011"
+            category: "safety_stop"
+            keywords:
+              required: ["cell", "safeguard", "guard", "guarding", "safety"]
+              any_of:
+                - ["agv", "interface", "robot", "equipment"]
+                - ["integrate", "integrated", "coordinate", "sync", "interact", "communication"]
+          - text: "Functional safety lifecycle for the machine control system"
+            source: "IEC 61508-1:2010"
+            category: "functional_safety"
+            keywords:
+              required: ["functional", "safe", "safety", "fault", "diagnostic", "self"]
+              any_of:
+                - ["machine", "equipment", "control", "system"]
+                - ["lifecycle", "diagnose", "monitor", "check", "self"]
+          - text: "Machine breakdown emitting fault signal and stopping intake"
+            source: "IEC 61508-1:2010"
+            category: "fault_handling"
+            keywords:
+              required: ["fault", "faults", "break", "breakdown", "fail", "failure", "error"]
+              any_of:
+                - ["machine", "equipment", "system"]
+                - ["signal", "emit", "report", "reporting", "alarm", "alert", "detect", "detection"]
+                - ["stop", "halt", "reject", "shutdown", "auto"]
+          - text: "Machine signaling 'ready for load' or 'cycle complete' to AGV / MES"
+            source: "IEC 62264-1:2013 / ISA-95"
+            category: "agv_signaling"
+            keywords:
+              required: ["ready", "complete", "completed", "cycle", "done", "finish", "finished", "status"]
+              any_of:
+                - ["signal", "report", "reporting", "publish", "send", "communicate", "inform"]
+                - ["agv", "mes", "fleet", "manager", "vehicle"]
+                - ["load", "part", "parts", "finish", "task", "process"]
+          - text: "Process cycle time variability affecting AGV dispatch"
+            source: "ISO 22400-2:2014"
+            category: "throughput"
+            keywords:
+              required: ["cycle", "process", "time", "task"]
+              any_of:
+                - ["vary", "variable", "variation", "change", "fluctuat", "ramp"]
+                - ["agv", "dispatch", "schedule", "scheduled", "task"]
+
+      - name: "other_agv"
+        description: >
+          Other AGVs creating traffic and path conflicts.
+        expected_behaviors:
+          - text: "Traffic management and deadlock avoidance at intersections"
+            source: "VDA 5050 v2.0.0"
+            category: "traffic_management"
+            keywords:
+              required: ["traffic", "intersect", "intersection", "junction", "crossing"]
+              any_of:
+                - ["deadlock", "conflict", "collision", "potential"]
+                - ["manage", "manager", "coordinate", "avoid", "avoidance", "resolve", "handle"]
+          - text: "Right-of-way and passing rules in shared lanes"
+            source: "ISO 3691-4:2020 §5"
+            category: "traffic_management"
+            keywords:
+              required: ["right", "way", "priority", "pass", "passing"]
+              any_of:
+                - ["lane", "shared", "road", "path", "route"]
+                - ["yield", "wait", "first", "rule", "rules", "overtake"]
+          - text: "Obstacle and other-vehicle detection causing protective stop"
+            source: "ISO 3691-4:2023; ANSI/ITSDF B56.5-2019"
+            category: "collision_avoidance"
+            keywords:
+              required: ["agv", "vehicle", "obstacle", "obstacles", "object"]
+              any_of:
+                - ["detect", "detected", "detection", "sense", "approach", "near"]
+                - ["stop", "halt", "brake", "avoid", "avoidance"]
+          - text: "Order and state reporting to fleet manager"
+            source: "VDA 5050 v2.0.0 (order, state, visualization topics)"
+            category: "fleet_communication"
+            keywords:
+              required: ["order", "state", "status", "task", "tasks"]
+              any_of:
+                - ["fleet", "manager", "master", "central", "control", "controller"]
+                - ["report", "reporting", "publish", "send", "broadcast", "communicate", "message"]
+          - text: "Battery state and charging behavior causing route changes"
+            source: "VDA 5050 v2.0.0 (battery state)"
+            category: "energy_management"
+            keywords:
+              required: ["battery", "charge", "charging", "energy", "power"]
+              any_of:
+                - ["low", "level", "state", "depleted", "drained"]
+                - ["charge", "charging", "dock", "docking", "station", "recharge"]
+                - ["route", "path", "navigate", "navigating", "return"]
+          - text: "Multi-AGV path planning and conflict resolution"
+            source: "Vis I.F.A., EJOR 170(3), 2006"
+            category: "traffic_management"
+            keywords:
+              required: ["path", "route", "plan", "planning"]
+              any_of:
+                - ["multi", "several", "fleet", "many", "other"]
+                - ["agv", "vehicle", "robot"]
+                - ["conflict", "avoid", "avoidance", "coordinate", "resolve", "handle"]
+          - text: "Centralized fleet coordination architecture with master control"
+            source: "Le-Anh & De Koster, EJOR 171(1), 2006"
+            category: "fleet_communication"
+            keywords:
+              required: ["fleet", "central", "centralized", "master"]
+              any_of:
+                - ["coordinate", "coordination", "control", "manage", "manager"]
+                - ["agv", "vehicle", "robot"]

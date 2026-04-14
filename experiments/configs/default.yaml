@@ -1,0 +1,45 @@
+# =============================================================================
+# KCC 2026 — Default Experiment Configuration (GPT-4)
+# =============================================================================
+# Compares four generation strategies:
+#   - zero_shot
+#   - few_shot_generic       (SITL-unrelated examples only; no answer leakage)
+#   - proposed               (decompose → elicit → synthesize)
+#   - proposed_with_few_shot (examples injected at synthesis step only)
+#
+# Each generation result is evaluated twice: raw (just generated) and
+# repaired (after a structural_repair post-pass using only BT.CPP errors).
+# =============================================================================
+
+experiment:
+  name: "sitl_env_bt_gen"
+  description: >
+    KCC 2026 main experiment — compare zero_shot, few_shot_generic,
+    proposed, and proposed_with_few_shot across three SITL domains.
+  repetitions: 10
+
+model:
+  name: "gpt-4"
+  # provider: openai | anthropic | compatible | local
+  # null -> auto-infer from model name
+  provider: null
+  base_url: null
+  temperature: 0.7
+  max_tokens: 4096
+  # seed (best-effort determinism, OpenAI only). Leave null to keep sampling.
+  seed: null
+
+strategies:
+  - zero_shot
+  - few_shot_generic
+  - proposed
+  - proposed_with_few_shot
+
+# Post-processing repair: fixes ONLY structural errors (BT.CPP load failures).
+# Coverage signal is never passed to the LLM during repair.
+repair:
+  enabled: true
+  max_iterations: 3
+
+# Domains + objects are shared with llama.yaml via the include directive.
+domains_include: "_domains.yaml"

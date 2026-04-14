@@ -1,0 +1,37 @@
+# =============================================================================
+# KCC 2026 — Llama-3 70B run (Together AI)
+# =============================================================================
+# Same domains/strategies/repair as default.yaml — only the model differs.
+#
+# Prerequisites: .env must contain TOGETHER_API_KEY
+#
+# Usage:
+#   python run_experiment.py --config experiments/configs/llama.yaml
+# =============================================================================
+
+experiment:
+  name: "sitl_env_bt_gen_llama"
+  description: >
+    Cross-model replication using Llama-3 70B Instruct via Together AI's
+    OpenAI-compatible endpoint.
+  repetitions: 10
+
+model:
+  name: "meta-llama/Llama-3.3-70B-Instruct-Turbo"
+  provider: "compatible"
+  base_url: null            # null -> resolve from TOGETHER_API_KEY
+  temperature: 0.7
+  max_tokens: 4096
+  seed: null
+
+strategies:
+  - zero_shot
+  - few_shot_generic
+  - proposed
+  - proposed_with_few_shot
+
+repair:
+  enabled: true
+  max_iterations: 3
+
+domains_include: "_domains.yaml"
