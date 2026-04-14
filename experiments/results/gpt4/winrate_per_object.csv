@@ -1,0 +1,12 @@
+domain,object,winner,zero_shot_mean,few_shot_generic_mean,proposed_mean,proposed_with_few_shot_mean
+drone,airspace_obstacle,proposed_with_few_shot,0.050100000000000006,0.0668,0.11660000000000001,0.2167
+drone,ground_target,proposed,0.16670000000000001,0.26680000000000004,0.45,0.38330000000000003
+drone,signal_environment,proposed,0.31439999999999996,0.3286,0.5428999999999999,0.3857
+drone,weather_environment,few_shot_generic,0.10020000000000001,0.4833,0.4167,0.45
+elevator,building_system,proposed_with_few_shot,0.18589999999999998,0.34299999999999997,0.6856,0.7998
+elevator,elevator_car,proposed_with_few_shot,0.0875,0.3375,0.5375,0.5625
+elevator,passenger,proposed_with_few_shot,0.3875,0.3875,0.7125,0.8125
+smart_factory,conveyor_system,proposed_with_few_shot,0.2335,0.2167,0.4499,0.6667
+smart_factory,factory_equipment,proposed,0.06670000000000001,0.0834,0.5001,0.3834
+smart_factory,human_worker,proposed_with_few_shot,0.1835,0.1501,0.1833,0.3666
+smart_factory,other_agv,proposed_with_few_shot,0.2717,0.38589999999999997,0.5142,0.6284

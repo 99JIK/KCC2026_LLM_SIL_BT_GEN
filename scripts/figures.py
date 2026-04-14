@@ -341,6 +341,52 @@ def fig_significance(results, out_path):
     plt.close()
 
 
+def fig_by_domain(results, out_path):
+    """Grouped bar chart: coverage per (domain, strategy), raw only.
+
+    Shows how each strategy generalizes across SITL domains.
+    """
+    g = defaultdict(list)
+    for r in results:
+        if r["condition"] != "raw":
+            continue
+        g[(r["domain"], r["strategy"])].append(r["coverage"]["ratio"])
+
+    domains = sorted({d for d, _ in g})
+    present = [s for s in STRATEGIES_ORDER if any(g.get((d, s)) for d in domains)]
+    if not domains or not present:
+        return
+
+    fig, ax = plt.subplots(figsize=(max(9, len(domains) * 3), 6))
+    n_strats = len(present)
+    x = np.arange(len(domains))
+    width = 0.8 / n_strats
+
+    for i, s in enumerate(present):
+        means = [mean(g[(d, s)]) * 100 if g.get((d, s)) else 0 for d in domains]
+        errs = [_ci95(g[(d, s)]) * 100 for d in domains]
+        offset = (i - (n_strats - 1) / 2) * width
+        bars = ax.bar(x + offset, means, width, yerr=errs, capsize=3,
+                      label=STRATEGY_LABELS[s].replace("\n", " "),
+                      color=STRATEGY_COLORS[s], edgecolor="black", linewidth=0.6)
+        for b, m in zip(bars, means):
+            ax.annotate(f"{m:.0f}",
+                        xy=(b.get_x() + b.get_width() / 2, m),
+                        xytext=(0, 3), textcoords="offset points",
+                        ha="center", fontsize=9)
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(domains)
+    ax.set_ylabel("Behavior coverage (%)")
+    ax.set_title("Coverage by domain × strategy (raw, 95% CI)")
+    ax.legend(loc="upper left", fontsize=10)
+    ax.grid(axis="y", alpha=0.3, linestyle="--")
+    ax.set_axisbelow(True)
+    plt.tight_layout()
+    plt.savefig(out_path)
+    plt.close()
+
+
 def fig_best_of_n(results, out_path):
     """Best-of-N coverage curve."""
     fig, ax = plt.subplots(figsize=(9, 6))
@@ -433,6 +479,7 @@ def main():
     figs = [
         ("fig_main_coverage", fig_main_coverage),
         ("fig_main_validity", fig_main_validity),
+        ("fig_by_domain", fig_by_domain),
         ("fig_h1_scatter", fig_h1_scatter),
         ("fig_pipeline_cost", fig_pipeline_cost),
         ("fig_significance", fig_significance),

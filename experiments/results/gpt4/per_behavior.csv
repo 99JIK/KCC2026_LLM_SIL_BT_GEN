@@ -1,0 +1,74 @@
+domain,object,idx,behavior,category,matched,total,rate
+drone,airspace_obstacle,1,FLARM transponder report for general aviation traffic at low altitude,traffic_advisory,0,40,0.0
+drone,airspace_obstacle,2,Simulated traffic injection via fake_traffic command for SITL testing,traffic_advisory,0,40,0.0
+drone,airspace_obstacle,5,Geofence breach signal causing return-to-launch or land response,geofence,0,40,0.0
+smart_factory,conveyor_system,1,Interlocked guard stopping conveyor when access door opens,safety_interlock,0,40,0.0
+drone,airspace_obstacle,0,ADS-B traffic transponder report indicating aircraft on intersecting heading,traffic_advisory,1,40,0.025
+drone,ground_target,0,Static landing pad with fiducial marker for precision landing,landing_pad,1,40,0.025
+smart_factory,human_worker,5,Bumper or pressure sensor contact with AGV causing immediate stop,contact_safety,1,40,0.025
+elevator,elevator_car,7,Stopping accuracy and releveling at floor,movement_control,2,40,0.05
+smart_factory,factory_equipment,0,Robot arm protective stop on safeguarded space intrusion,safety_stop,2,40,0.05
+smart_factory,factory_equipment,5,Process cycle time variability affecting AGV dispatch,throughput,2,40,0.05
+drone,signal_environment,3,RC link loss triggering RC loss failsafe,link_loss,3,40,0.075
+drone,signal_environment,5,GPS spoofing producing false position fix,gps_spoof,4,40,0.1
+smart_factory,human_worker,1,Worker entering AGV safety zone triggering protective stop,safety_zone,4,40,0.1
+elevator,passenger,4,Trigger overload condition by exceeding rated load capacity,load_protection,5,40,0.125
+drone,ground_target,3,Obstructed landing zone causing precision landing fallback,landing_pad,5,40,0.125
+elevator,building_system,4,Security access control restricting floor selection by card or PIN,access_control,6,40,0.15
+smart_factory,human_worker,2,Speed and separation monitoring with collaborative robot,ssm,6,40,0.15
+elevator,elevator_car,5,Inspection or maintenance mode operation with reduced speed and override safety,maintenance_mode,7,40,0.175
+drone,signal_environment,1,GPS failure injection via SYS_FAILURE_EN parameter,gps_loss,7,40,0.175
+smart_factory,human_worker,4,Trigger emergency stop device on operator console or AGV,emergency_stop,7,40,0.175
+smart_factory,factory_equipment,1,Cell-level safeguarding integrated with AGV interfaces,safety_stop,7,40,0.175
+elevator,elevator_car,4,Seismic sensor activation moving car to nearest landing with doors open,emergency_response,8,40,0.2
+elevator,elevator_car,6,Emergency electrical operation for trapped passenger rescue,emergency_response,9,40,0.225
+smart_factory,other_agv,6,Centralized fleet coordination architecture with master control,fleet_communication,9,40,0.225
+drone,weather_environment,2,Wind gust events with configurable max velocity and direction variance,gust,10,40,0.25
+drone,ground_target,4,Payload delivery drop trigger at target with gripper or release mechanism,delivery,10,40,0.25
+smart_factory,conveyor_system,3,Handshake or ready signal exchange with AGV at pickup or dropoff,agv_handshake,11,40,0.275
+smart_factory,human_worker,0,Pedestrian crossing AGV path requiring AGV personnel detection and stop,path_crossing,11,40,0.275
+smart_factory,other_agv,3,Order and state reporting to fleet manager,fleet_communication,11,40,0.275
+elevator,passenger,6,Wheelchair or reduced-mobility passenger requiring extended door dwell,accessibility,12,40,0.3
+drone,airspace_obstacle,4,Dynamic obstacle entering safety cylinder triggering collision prevention,dynamic_obstacle,12,40,0.3
+smart_factory,conveyor_system,2,Load presence detection at AGV transfer point reporting state,agv_handshake,12,40,0.3
+smart_factory,factory_equipment,4,Machine signaling 'ready for load' or 'cycle complete' to AGV / MES,agv_signaling,12,40,0.3
+smart_factory,other_agv,1,Right-of-way and passing rules in shared lanes,traffic_management,12,40,0.3
+drone,weather_environment,0,Steady mean wind velocity from a configurable direction,wind,14,40,0.35
+drone,weather_environment,5,Rain or precipitation reducing visibility and sensor reliability,visibility,14,40,0.35
+drone,airspace_obstacle,3,"Static obstacle (building, tower) intersecting planned flight path",static_obstacle,14,40,0.35
+drone,signal_environment,4,Telemetry datalink loss triggering data link loss failsafe,link_loss,14,40,0.35
+elevator,building_system,3,Power outage triggering emergency battery operation,power_management,15,40,0.375
+drone,weather_environment,1,Wind velocity variance producing realistic fluctuation,wind,15,40,0.375
+smart_factory,other_agv,4,Battery state and charging behavior causing route changes,energy_management,15,40,0.375
+drone,weather_environment,4,Atmospheric turbulence injection for SITL robustness testing,turbulence,16,40,0.4
+elevator,elevator_car,2,Overload sensor activation preventing door close and movement until load is reduced,load_protection,17,40,0.425
+drone,ground_target,2,Moving landing target following waypoints in simulation,moving_target,17,40,0.425
+smart_factory,factory_equipment,2,Functional safety lifecycle for the machine control system,functional_safety,17,40,0.425
+smart_factory,other_agv,0,Traffic management and deadlock avoidance at intersections,traffic_management,17,40,0.425
+elevator,building_system,5,Smoke detector activation on a specific floor making elevator skip that floor,fire_response,18,40,0.45
+elevator,building_system,6,Scheduled maintenance mode signal locking out normal service,maintenance_mode,18,40,0.45
+drone,weather_environment,3,In-flight wind change via simulator parameters during simulation,wind,18,40,0.45
+drone,ground_target,5,Multi-vehicle simulation with cooperative ground vehicle,moving_target,19,40,0.475
+smart_factory,conveyor_system,0,Emergency stop activation halting belt motion,emergency_stop,19,40,0.475
+elevator,elevator_car,1,Door reopen on obstruction with kinetic energy limit and acoustic signal on detector failure,door_safety,20,40,0.5
+elevator,passenger,2,Trigger door reopen by interrupting light curtain when entering or exiting,door_interaction,20,40,0.5
+elevator,building_system,1,Firefighter switch operation enabling Phase 2 in-car firefighter control,fire_response,21,40,0.525
+elevator,passenger,3,Hold door open by pressing door open button or extending dwell time,door_interaction,22,40,0.55
+smart_factory,conveyor_system,5,Speed and throughput variation affecting AGV scheduling,general_operation,22,40,0.55
+smart_factory,factory_equipment,3,Machine breakdown emitting fault signal and stopping intake,fault_handling,22,40,0.55
+drone,signal_environment,0,GPS signal loss triggering position loss failsafe,gps_loss,23,40,0.575
+elevator,passenger,1,Enter car when doors open and select destination floor,boarding,24,40,0.6
+drone,ground_target,1,IR-LOCK beacon emission for IR-based precision landing,landing_pad,24,40,0.6
+smart_factory,human_worker,3,Manual loading and unloading task at AGV station,manual_task,24,40,0.6
+elevator,passenger,5,Press emergency alarm button to call building attendant or emergency line,emergency_request,25,40,0.625
+drone,signal_environment,6,Wideband GPS jamming causing loss of fix,gps_jam,26,40,0.65
+elevator,building_system,0,Fire alarm activation triggering Phase 1 fire service recall,fire_response,28,40,0.7
+elevator,elevator_car,3,Electrical safety circuit activation stopping car movement immediately,electrical_safety,29,40,0.725
+elevator,elevator_car,0,Door open and close with light curtain obstruction detection at 50mm resolution,door_safety,30,40,0.75
+smart_factory,conveyor_system,4,"Conveyor general safety: start warning, controlled stopping, guarding",general_operation,30,40,0.75
+smart_factory,other_agv,2,Obstacle and other-vehicle detection causing protective stop,collision_avoidance,30,40,0.75
+smart_factory,other_agv,5,Multi-AGV path planning and conflict resolution,traffic_management,32,40,0.8
+drone,signal_environment,2,GPS noise and position drift during simulation,gps_degrade,33,40,0.825
+elevator,building_system,2,Seismic sensor activation initiating elevator earthquake response,seismic_response,35,40,0.875
+elevator,passenger,0,Press hall call button (up or down) and wait for car arrival,request_call,38,40,0.95
+elevator,passenger,7,Press multiple destination floors during single ride,request_call,38,40,0.95
