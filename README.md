@@ -1,6 +1,6 @@
 # KCC 2026 — LLM 기반 SITL 환경 객체 행동 트리 자동 생성
 
-임베디드 시스템의 SITL(Software-in-the-Loop) 시험에서 SUT를 둘러싼
+임베디드 시스템의 SIL(Software-in-the-Loop) 시험에서 SUT를 둘러싼
 **환경 객체(environment object)** 의 행동 트리를 LLM으로 자동 생성하는
 프레임워크입니다.
 
@@ -10,7 +10,7 @@
   객체가 현실에서 가질 수 있는 모든 행동을 서브트리로 포함한 단일 BT.
 - **3-단계 분해 파이프라인**: decompose(행동 영역 나열) → elicit(영역별 구체
   행동 생성) → synthesize(BT XML 합성).
-- **공정한 후처리**: 구조 오류만 LLM에 피드백 (커버리지 신호 누출 없음).
+- **공정한 후처리**: 구조 오류만 LLM에 피드백 (커버 범위 신호 누출 없음).
 
 ## 비교하는 4개 생성 전략
 
@@ -33,7 +33,7 @@
 │   ├── bt_validator/
 │   │   ├── validator.py              # 4단계 구조 검증 파이프라인
 │   │   ├── btcpp_loader.cpp          # BT.CPP v4 런타임 로더 (C++)
-│   │   └── coverage.py               # 키워드 기반 커버리지 평가
+│   │   └── coverage.py               # 키워드 기반 커버 범위 평가
 │   ├── prompts/templates.py          # 프롬프트 템플릿
 │   └── utils/logging.py              # JSONL 실험 로거
 ├── data/few_shot_examples/generic/   # SITL 무관 예시 BT
@@ -114,12 +114,12 @@ python scripts/figures.py $LOG --rescore \
 
 | 파일 | 내용 |
 |---|---|
-| `fig_main_coverage` | 전략별 커버리지 막대 (raw/repaired, 95% CI) |
+| `fig_main_coverage` | 전략별 커버 범위 막대 (raw/repaired, 95% CI) |
 | `fig_main_validity` | 전략별 BT.CPP 유효성 |
 | `fig_h1_scatter` | H1 증거: 구조 수리의 Δvalidity vs Δcoverage |
 | `fig_pipeline_cost` | 제안 파이프라인의 단계별 토큰 비용 |
 | `fig_significance` | 쌍별 유의성 (Wilcoxon, Cohen's d) |
-| `fig_best_of_n` | Best-of-N 커버리지 곡선 |
+| `fig_best_of_n` | Best-of-N 커버 범위 곡선 |
 
 ## 테스트
 
@@ -130,10 +130,10 @@ pytest tests/
 ## 평가 메트릭
 
 - **구조 유효성**: 4단계 (XML 문법 → 스키마 → 구조 → BT.CPP v4 런타임)
-- **행동 커버리지**: 공개 표준 기반 키워드 매칭 (EN 81-20/70/72, ASME A17.1,
+- **행동 커버 범위**: 공개 표준 기반 키워드 매칭 (EN 81-20/70/72, ASME A17.1,
   ISO 3691-4, ISO 10218, VDA 5050, PX4 등)
 - **통계**: paired Wilcoxon, Holm 보정, Cohen's d, bootstrap 95% CI
 
 ## 라이선스
 
-학술 연구 목적. KCC 2026 투고 예정.
+KCC 2026 투고 예정.
